@@ -39,7 +39,7 @@ def lights_main(MQTTClient):
                 count += 1
 
             print("Sensor Output for AUTO mode:", count)
-            if count > 79999: return GPIO.LOW
+            if count < 79999: return GPIO.LOW
             else: return GPIO.HIGH
 
         except Exception as err:
@@ -51,7 +51,8 @@ def lights_main(MQTTClient):
 
 
     while not lights_main.stop:
-        if current_mode == "AUTO":
+        if updated_mode == "AUTO":
+            current_mode = "AUTO"
             GPIO.output(output_pin, auto_mode(ldr_pin))
 
         elif current_mode != updated_mode:
