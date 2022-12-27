@@ -2,12 +2,13 @@ import json
 import time
 import RPi.GPIO as GPIO
 
-def lights_main(MQTTClient):
 
-    lights_main.stop = False    # Function attribute used for stopping thread
-    ldr_pin = 11                # Pin for taking sensor inputs
-    output_pin = 40
-    updated_mode = "AUTO"       # Default
+def led_control_function(MQTTClient, led_config):
+
+    led_control_function.stop = False           # Function attribute used for stopping thread
+    ldr_pin = int(led_config['ldr_pin'])                # Pin for taking sensor inputs
+    output_pin = int(led_config['output_pin'])
+    updated_mode = "AUTO"                      # Default
     current_mode = updated_mode
     Mode_To_GPIO_Signal = {
         "ON": GPIO.HIGH,
@@ -46,11 +47,11 @@ def lights_main(MQTTClient):
             print("Error while receiving input from sensor.\n Exception:", err)
 
 
-    print("Subscribing to topic 'Manual_LED_Control' ...")
-    MQTTClient.subscribe(topic="Manual_LED_Control", QoS=0, callback=on_LED_signal_received)
+    print("Subscribing to topic 'LED_MODE_CONTROL' ...")
+    MQTTClient.subscribe(topic=f"LED_MODE_CONTROL/{led_config['led_id']}", QoS=0, callback=on_LED_signal_received)
 
 
-    while not lights_main.stop:
+    while not led_control_function.stop:
         if updated_mode == "AUTO":
             current_mode = "AUTO"
             GPIO.output(output_pin, auto_mode(ldr_pin))
@@ -59,4 +60,6 @@ def lights_main(MQTTClient):
             current_mode = updated_mode
             GPIO.output(output_pin, Mode_To_GPIO_Signal[current_mode])
 
-        time.sleep(1)    
+        time.sleep(1) 
+
+    print(f"Stopping thread for led-{led_config['led_id']}")   
