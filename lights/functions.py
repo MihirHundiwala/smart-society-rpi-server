@@ -6,9 +6,9 @@ import RPi.GPIO as GPIO
 def led_control_function(MQTTClient, led_config):
 
     led_control_function.stop = False           # Function attribute used for stopping thread
-    ldr_pin = int(led_config['ldr_pin'])                # Pin for taking sensor inputs
+    ldr_pin = int(led_config['ldr_pin'])        # Pin for taking sensor inputs
     output_pin = int(led_config['output_pin'])
-    updated_mode = "AUTO"                      # Default
+    updated_mode = "AUTO"                       # Default
     current_mode = updated_mode
     Mode_To_GPIO_Signal = {
         "ON": GPIO.HIGH,
@@ -39,7 +39,7 @@ def led_control_function(MQTTClient, led_config):
             while (GPIO.input(ldr_pin) == GPIO.LOW):
                 count += 1
 
-            print("Sensor Output for AUTO mode:", count)
+            print(f"Sensor Output for AUTO mode({led_config['led_id']}): {count}")
             if count < 79999: return GPIO.LOW
             else: return GPIO.HIGH
 

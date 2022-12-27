@@ -1,8 +1,8 @@
 import threading
 import RPi.GPIO as GPIO
-from .aws.connections import MQTTClient
-from .lights.functions import led_control_function
-from .lights.led_configs import led_config_list
+from aws.connections import MQTTClient
+from lights.functions import led_control_function
+from lights.led_configs import led_config_list
 
 # _____________________________________________________
 
@@ -23,11 +23,11 @@ thread_list = []
 for led_config in led_config_list:
     thread = threading.Thread(
         target=led_control_function, 
-        name=f"thread-led-{led_config['id']}", 
+        name=f"thread-led-{led_config['led_id']}", 
         args=(MQTTClient, led_config)
     )
     thread_list.append(thread)
-    print(f"Starting thread for lights [LED-{led_config['id']}]...") 
+    print(f"Starting thread for lights [LED-{led_config['led_id']}]...") 
     thread.start()
 
 # _____________________________________________________
