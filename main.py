@@ -1,6 +1,7 @@
 import threading
 import RPi.GPIO as GPIO
 from aws.connections import MQTTClient
+from gate.functions import gate_control_function
 from lights.functions import led_control_function
 from lights.led_configs import led_config_list
 
@@ -32,11 +33,21 @@ for led_config in led_config_list:
 
 # _____________________________________________________
 
+gate_thread = threading.Thread(
+        target=gate_control_function, 
+        name=f"thread-gate-control", 
+        args=(MQTTClient)
+    )
+gate_thread.start()
+# _____________________________________________________
+
 try:
     while True:
         pass
 
 except KeyboardInterrupt:
+    gate_thread.target.stop = True
+    gate_thread.join()
     for thread in thread_list:
         thread.target.stop = True
         thread.join()
