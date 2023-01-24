@@ -6,7 +6,7 @@ def gate_control_function(MQTTClient):
 
     def blinkled(client, userdata, message):
         # Set pin 36 to be an output pin and set initial value to low (off)
-        print("Blinking")
+        print("Opening Gate...")
         GPIO.setup(36, GPIO.OUT)
         for i in range(5):
             GPIO.output(36, GPIO.HIGH)  # Turn on
