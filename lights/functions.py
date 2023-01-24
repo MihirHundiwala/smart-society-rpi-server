@@ -40,7 +40,7 @@ def led_control_function(MQTTClient, led_config):
                 count += 1
 
             print(f"Sensor Output for AUTO mode({led_config['led_id']}): {count}")
-            if count < 79999: return GPIO.LOW
+            if count < 69999: return GPIO.LOW
             else: return GPIO.HIGH
 
         except Exception as err:

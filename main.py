@@ -35,8 +35,8 @@ for led_config in led_config_list:
 
 gate_thread = threading.Thread(
         target=gate_control_function, 
-        name=f"thread-gate-control", 
-        args=(MQTTClient)
+        name="thread-gate-control", 
+        args=(MQTTClient,)
     )
 gate_thread.start()
 # _____________________________________________________
