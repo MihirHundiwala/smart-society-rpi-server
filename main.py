@@ -9,6 +9,8 @@ from lights.led_configs import led_config_list
 
 print("Setting up Raspberry PI...")
 GPIO.setmode(GPIO.BOARD)
+GPIO.setup(12, GPIO.OUT)
+GPIO.output(12, GPIO.HIGH)
 
 # _____________________________________________________
 
