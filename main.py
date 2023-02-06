@@ -1,9 +1,15 @@
 import threading
-import RPi.GPIO as GPIO
 from aws.connections import MQTTClient
+import RPi.GPIO as GPIO
+
 from gate.functions import gate_control_function
-from lights.functions import led_control_function
-from lights.led_configs import led_config_list
+
+from lights.functions import light_control_function
+from lights.light_configs import light_config_list
+
+from plants.functions import plant_control_function
+from plants.plant_configs import plant_config_list
+
 
 # _____________________________________________________
 
@@ -23,15 +29,27 @@ thread_list = []
 
 # _____________________________________________________
 
-for led_config in led_config_list:
+for light_config in light_config_list:
     thread = threading.Thread(
-        target=led_control_function, 
-        name=f"thread-led-{led_config['led_id']}", 
-        args=(MQTTClient, led_config)
+        target=light_control_function, 
+        name=f"thread-light-{light_config['light_id']}", 
+        args=(MQTTClient, light_config)
     )
     thread_list.append(thread)
-    print(f"Starting thread for lights [LED-{led_config['led_id']}]...") 
     thread.start()
+    print(f"Started thread for lights [light-{light_config['light_id']}]...") 
+
+# _____________________________________________________
+
+for plant_config in plant_config_list:
+    thread = threading.Thread(
+        target=plant_control_function, 
+        name=f"thread-plant-{plant_config['plant_id']}", 
+        args=(MQTTClient, plant_config)
+    )
+    thread_list.append(thread)
+    thread.start()
+    print(f"Started thread for plants [plant-{plant_config['plant_id']}]...") 
 
 # _____________________________________________________
 
@@ -41,6 +59,9 @@ gate_thread = threading.Thread(
         args=(MQTTClient,)
     )
 gate_thread.start()
+thread_list.append(gate_thread)
+print("Started thread for gate")
+
 # _____________________________________________________
 
 try:
@@ -48,10 +69,10 @@ try:
         pass
 
 except KeyboardInterrupt:
-    gate_thread.target.stop = True
-    gate_thread.join()
+    light_control_function.stop = True
+    plant_control_function.stop = True
+    gate_control_function.stop = True
     for thread in thread_list:
-        thread.target.stop = True
         thread.join()
 
 finally:
