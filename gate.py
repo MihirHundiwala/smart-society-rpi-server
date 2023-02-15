@@ -1,8 +1,7 @@
-import time
+import time, json
 import RPi.GPIO as GPIO 
 
-def gate_control_function(MQTTClient):
-    #gate_control_function.stop = False # Function attribute used for stopping thread
+def gate_control_function(MQTTClient, gate_config_list):
     
     def blinkled(pin):
         GPIO.setup(pin, GPIO.OUT)
@@ -13,28 +12,31 @@ def gate_control_function(MQTTClient):
             time.sleep(0.5)  # Sleep for 1 second
     
     def open_gate(client, userdata, message):
+        payload = json.loads(message.payload)
+        gate_id = payload.get("gate_id")
+        gate_config = gate_config_list[gate_id]
+
+        GPIO.output(gate_config['red_led_pin'], GPIO.LOW)
+        blinkled(gate_config['green_led_pin'])
         
-        GPIO.output(12, GPIO.LOW)
-        blinkled(10)
-        
-        GPIO.setup(8, GPIO.OUT)
-        servo = GPIO.PWM(8, 50)
+        GPIO.setup(gate_config['servo_pin'], GPIO.OUT)
+        servo = GPIO.PWM(gate_config['servo_pin'], 50)
         servo.start(0)
 
         def setAngle(angle):
             duty = angle / 18 + 2
-            GPIO.output(8, True)
+            GPIO.output(gate_config['servo_pin'], True)
             servo.ChangeDutyCycle(duty)
             time.sleep(1)
-            GPIO.output(8, False)
+            GPIO.output(gate_config['servo_pin'], False)
             servo.ChangeDutyCycle(0)
         
         print("Opening")
         setAngle(90)
-        time.sleep(3) # Close after 3 seconds
-        blinkled(12)
+        time.sleep(10) # Close after 10 seconds
+        blinkled(gate_config['red_led_pin'])
         setAngle(0)
-        GPIO.output(12, GPIO.HIGH)
+        GPIO.output(gate_config['red_led_pin'], GPIO.HIGH)
         
         servo.stop()
         #GPIO.cleanup()

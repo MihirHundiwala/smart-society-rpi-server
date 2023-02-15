@@ -3,6 +3,7 @@ from aws.connections import MQTTClient
 import RPi.GPIO as GPIO
 
 from gate import gate_control_function
+from config import gate_config_list
 
 from lights import light_control_function
 from config import light_config_list
@@ -51,16 +52,9 @@ for plant_config in plant_config_list:
 
 # _____________________________________________________
 
-gate_thread = threading.Thread(
-    target=gate_control_function,
-    name="thread-gate-control",
-    args=(MQTTClient,)
-)
-gate_thread.start()
-thread_list.append(gate_thread)
-print("Started thread for gate")
+gate_control_function(MQTTClient, gate_config_list)
 
-_____________________________________________________
+# _____________________________________________________
 
 try:
     while True:
@@ -69,7 +63,6 @@ try:
 except KeyboardInterrupt:
     light_control_function.stop = True
     plant_control_function.stop = True
-    gate_control_function.stop = True
     for thread in thread_list:
         thread.join()
 

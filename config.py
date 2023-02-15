@@ -19,19 +19,19 @@ plant_config_list = [
     }
 ]
 
-gate_config_list = [
+gate_config_list = {
     # Pedestrian gate
-    {
+    '1' : {
         'gate_id': '1',
         'servo_pin': '',
         'green_led_pin': '',
         'red_led_pin': '',
     },
     # Vehicle gate
-    {
+    '2' : {
         'gate_id': '2',
         'servo_pin': '',
         'green_led_pin': '',
         'red_led_pin': '',
     }
-]
+}
