@@ -5,10 +5,10 @@ import RPi.GPIO as GPIO
 from gate.functions import gate_control_function
 
 from lights.functions import light_control_function
-from lights.light_configs import light_config_list
+from .config import light_config_list
 
 from plants.functions import plant_control_function
-from plants.plant_configs import plant_config_list
+from .config import plant_config_list
 
 
 # _____________________________________________________
