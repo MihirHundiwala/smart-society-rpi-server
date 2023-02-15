@@ -2,13 +2,13 @@ import threading
 from aws.connections import MQTTClient
 import RPi.GPIO as GPIO
 
-from .gate import gate_control_function
+from gate import gate_control_function
 
-from .lights import light_control_function
-from .config import light_config_list
+from lights import light_control_function
+from config import light_config_list
 
-from .plants import plant_control_function
-from .config import plant_config_list
+from plants import plant_control_function
+from config import plant_config_list
 
 
 # _____________________________________________________
@@ -60,7 +60,7 @@ gate_thread.start()
 thread_list.append(gate_thread)
 print("Started thread for gate")
 
-# _____________________________________________________
+_____________________________________________________
 
 try:
     while True:

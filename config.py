@@ -14,13 +14,8 @@ light_config_list = [
 plant_config_list = [
     {
         'plant_id': '1',
-        'sms_pin': '',
-        'output_pin': '',
-    },
-    {
-        'plant_id': '2',
-        'sms_pin': '',
-        'output_pin': '',
+        'sms_pin': '8',
+        'output_pin': '10',
     }
 ]
 

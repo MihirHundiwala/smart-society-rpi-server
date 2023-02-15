@@ -11,20 +11,20 @@ def plant_control_function(MQTTClient, plant_config):
     sms_pin = int(plant_config['sms_pin'])          # Pin for taking sensor inputs
     output_pin = int(plant_config['output_pin'])    # Pin for giving output for water pump motors
     GPIO.setup(sms_pin, GPIO.IN)
-    GPIO.setup(output_pin, GPIO.OUT)
+    GPIO.setup(output_pin, GPIO.OUT, initial=GPIO.HIGH)
 
     updated_mode = "AUTO"                           # Default
     current_mode = "AUTO"
 
     Mode_To_GPIO_Signal = {
-        "ON": GPIO.HIGH,
-        "OFF": GPIO.LOW,
+        "ON": GPIO.LOW,
+        "OFF": GPIO.HIGH,
     }
 
     stop_motor_on = datetime.min
     cooldown = datetime.min
 
-    pour_water_time = 3         # in seconds
+    pour_water_time = 5         # in seconds
     cooldown_time = 20          # in seconds
 
     def on_plant_signal_received(client, userdata, message):
@@ -42,29 +42,29 @@ def plant_control_function(MQTTClient, plant_config):
         try:
             if stop_motor_on >= datetime.now():
                 print("Keeping motor on till time specified")
-                return GPIO.HIGH
+                return GPIO.LOW
 
             if cooldown >= datetime.now():
                 print(
                     f"On cooldown for {(cooldown-datetime.now()).total_seconds()} seconds")
-                return GPIO.LOW
+                return GPIO.HIGH
 
             elif GPIO.input(sms_pin):
                 print(
                     f"Water Inadequate, no cooldown period detected, pour water for {pour_water_time} seconds")
                 stop_motor_on = datetime.now() + timedelta(seconds=pour_water_time)
                 cooldown = stop_motor_on + timedelta(seconds=cooldown_time)
-                return GPIO.HIGH
+                return GPIO.LOW
 
             else:
                 print("Water Adequate")
-                return GPIO.LOW
+                return GPIO.HIGH
 
         except Exception as err:
             print(
                 "Error while receiving input from soil moisture sensor.\n Exception:", err)
 
-        return GPIO.LOW
+        return GPIO.HIGH
 
     MQTTClient.subscribe(
         topic=f"PLANT_MODE_CONTROL/{plant_config['plant_id']}", QoS=0, callback=on_plant_signal_received)
@@ -78,6 +78,8 @@ def plant_control_function(MQTTClient, plant_config):
         elif current_mode != updated_mode:
             current_mode = updated_mode
             GPIO.output(output_pin, Mode_To_GPIO_Signal[current_mode])
+            
+        time.sleep(1)
 
     print(f"Stopped thread for plant-{plant_config['plant_id']}")
 
