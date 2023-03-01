@@ -56,6 +56,16 @@ gate_control_function(MQTTClient, gate_config_list)
 
 # _____________________________________________________
 
+# fingerprint_thread = threading.Thread(
+#     target=finger_print_function,
+#     name=f"thread-fingerprint-sensor",
+#     args=(MQTTClient,)
+# )
+# thread_list.append(thread)
+# fingerprint_thread.start()
+
+# _____________________________________________________
+
 try:
     while True:
         pass
