@@ -11,6 +11,9 @@ from config import light_config_list
 from plants import plant_control_function
 from config import plant_config_list
 
+from biometric import fingerprint_function
+from vehicles import rfid_function
+
 
 # _____________________________________________________
 
@@ -56,13 +59,23 @@ gate_control_function(MQTTClient, gate_config_list)
 
 # _____________________________________________________
 
-# fingerprint_thread = threading.Thread(
-#     target=finger_print_function,
-#     name=f"thread-fingerprint-sensor",
-#     args=(MQTTClient,)
-# )
-# thread_list.append(thread)
-# fingerprint_thread.start()
+fingerprint_thread = threading.Thread(
+    target=fingerprint_function,
+    name=f"thread-fingerprint-sensor",
+    args=(MQTTClient,)
+)
+thread_list.append(thread)
+fingerprint_thread.start()
+
+# _____________________________________________________
+
+rfid_thread = threading.Thread(
+    target=rfid_function,
+    name=f"thread-rfid-reader",
+    args=(MQTTClient,)
+)
+thread_list.append(rfid_thread)
+rfid_thread.start()
 
 # _____________________________________________________
 
@@ -73,6 +86,9 @@ try:
 except KeyboardInterrupt:
     light_control_function.stop = True
     plant_control_function.stop = True
+    fingerprint_function.stop = True
+    rfid_function.stop = True
+    
     for thread in thread_list:
         thread.join()
 

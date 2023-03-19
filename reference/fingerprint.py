@@ -36,7 +36,7 @@ def get_fingerprint():
     print("Searching...")
     if finger.finger_search() != adafruit_fingerprint.OK:
         return False
-    return True
+    return finger.fingerID
 
 
 # pylint: disable=too-many-branches
