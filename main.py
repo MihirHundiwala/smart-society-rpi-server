@@ -64,7 +64,7 @@ fingerprint_thread = threading.Thread(
     name=f"thread-fingerprint-sensor",
     args=(MQTTClient,)
 )
-thread_list.append(thread)
+thread_list.append(fingerprint_thread)
 fingerprint_thread.start()
 
 # _____________________________________________________

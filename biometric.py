@@ -6,10 +6,13 @@ import adafruit_fingerprint
 uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
 finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 
+finger.empty_library()
 
-def match_fingerprint():
-    while finger.get_image() != adafruit_fingerprint.OK:
+def match_fingerprint(Mode):
+    while Mode.mode == "ENTRY" and finger.get_image() != adafruit_fingerprint.OK:
         pass
+    if Mode.mode == "ENROLL":
+        return "ENROLL"
     if finger.image_2_tz(1) != adafruit_fingerprint.OK:
         return False
     if finger.finger_search() != adafruit_fingerprint.OK:
@@ -20,15 +23,14 @@ def match_fingerprint():
 
 def enroll_fingerprint(location):
     enrolled = False
-    location = None
     image = None
     message = ""
 
     for i in range(1, 3):
         if i == 1:
-            print("Place finger on sensor...", end="")
+            print("Place finger on sensor...")
         else:
-            print("Place same finger again...", end="")
+            print("Place same finger again...")
 
         while True:
             image = finger.get_image()
@@ -104,26 +106,34 @@ def enroll_fingerprint(location):
 
 
 def find_empty_location():
+    finger.read_templates()
+    for i in range(1,128):
+        print(i)
+        if i not in finger.templates:
+            return i
     return 1
 
 
 def fingerprint_function(MQTTClient):
+    fingerprint_function.stop = False
 
-    mode = "ENTRY"
+    class Mode:
+        mode = "ENTRY"
+
     fingerprint_id = None
 
     def on_enroll_signal_recieved(client, userdata, message):
-        nonlocal mode, fingerprint_id
-        mode = "ENROLL"
-        payload = json.dumps(message.payload)
+        nonlocal Mode, fingerprint_id
+        Mode.mode = "ENROLL"
+        payload = json.loads(message.payload)
         fingerprint_id = payload.get("fingerprint_id")
-    MQTTClient.subscribe(topic=f"FINGERPRINT_ENROLL", QoS=0, callback=on_enroll_signal_recieved)
+    MQTTClient.subscribe(topic="FINGERPRINT_ENROLL", QoS=1, callback=on_enroll_signal_recieved)
     print("Subscribed to topic 'FINGERPRINT_ENROLL' ...")
 
 
     while not fingerprint_function.stop:
-        if mode == "ENROLL":
-            enrolled, location, image, message = enroll_fingerprint()
+        if Mode.mode == "ENROLL":
+            enrolled, location, image, message = enroll_fingerprint(find_empty_location())
 
             if enrolled:
                 payload = json.dumps({
@@ -141,11 +151,13 @@ def fingerprint_function(MQTTClient):
                 })
                 MQTTClient.publish(topic = "FINGERPRINT_REGISTRATION", payload = payload, QoS = 1)
 
-            mode = "ENTRY"
+            Mode.mode = "ENTRY"
 
         else:
-            fid = match_fingerprint()
-            if fid:
+            fid = match_fingerprint(Mode)
+            if fid == "ENROLL":
+                pass
+            elif fid:
                 payload = json.dumps({"fid":fid})
                 MQTTClient.publish(topic = "FINGERPRINT_VALIDATION", payload = payload, QoS = 1)
             else:
