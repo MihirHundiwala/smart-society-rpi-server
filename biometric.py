@@ -193,4 +193,6 @@ def fingerprint_function(MQTTClient):
             else:
                 print("Invalid Fingerprint")
 
+        time.sleep(2)
+
     print(f"Stopped thread for fingerprint sensor")
