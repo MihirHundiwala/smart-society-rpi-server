@@ -22,7 +22,7 @@ def send_fingerprint_status(status, recipients):
         'data': {
             'notification_type': 'update_status',
             'payload': {
-                'type': "fingerprint",
+                'type': "update_fingerprint_status",
                 'status': status,
             }
         }

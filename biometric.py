@@ -3,11 +3,13 @@ import serial
 import adafruit_fingerprint
 from notifications import send_fingerprint_status
 
+finger = None
 
-uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
-finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
-
-finger.empty_library()
+try:
+    uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
+    finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+except:
+    print("Fingerprint Sensor connection was not established")
 
 def match_fingerprint(State):
     while State.mode == "ENTRY" and finger.get_image() != adafruit_fingerprint.OK:
@@ -136,6 +138,9 @@ def find_empty_location():
 
 
 def fingerprint_function(MQTTClient):
+    if not finger:
+        return
+    
     fingerprint_function.stop = False
 
     class State:
