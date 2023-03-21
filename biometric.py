@@ -85,7 +85,7 @@ def enroll_fingerprint(location, State):
 
         if i == 1:
             print("Remove finger")
-            time.sleep(1)
+            send_fingerprint_status("Remove Finger", recipients=[State.notification_recipient])
             while image != adafruit_fingerprint.NOFINGER:
                 image = finger.get_image()
 
