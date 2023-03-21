@@ -187,6 +187,7 @@ def fingerprint_function(MQTTClient):
             if fid == "ENROLL":
                 pass
             elif fid:
+                print("Fingerprint found at location,", fid)
                 payload = json.dumps({"fid":fid})
                 MQTTClient.publish(topic = "FINGERPRINT_VALIDATION", payload = payload, QoS = 1)
             else:
