@@ -184,7 +184,6 @@ def fingerprint_function(MQTTClient):
 
         else:
             fid = match_fingerprint(State)
-            print(fid)
             if fid == "ENROLL":
                 pass
             elif fid:

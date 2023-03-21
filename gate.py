@@ -13,6 +13,7 @@ def gate_control_function(MQTTClient, gate_config_list):
     
     def open_gate(client, userdata, message):
         payload = json.loads(message.payload)
+        print("Opening -", payload.get("type"))
         gate_id = payload.get("gate_id")
         gate_config = gate_config_list[gate_id]
 
@@ -31,7 +32,6 @@ def gate_control_function(MQTTClient, gate_config_list):
             GPIO.output(gate_config['servo_pin'], False)
             servo.ChangeDutyCycle(0)
         
-        print("Opening")
         setAngle(90)
         time.sleep(10) # Close after 10 seconds
         blinkled(gate_config['red_led_pin'])
