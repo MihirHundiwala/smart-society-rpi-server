@@ -18,10 +18,8 @@ def match_fingerprint(State):
     if State.mode == "ENROLL":
         return "ENROLL"
     if finger.image_2_tz(1) != adafruit_fingerprint.OK:
-        print("search not found 2")
         return False
     if finger.finger_search() != adafruit_fingerprint.OK:
-        print("search not found 1")
         return False
     
     return finger.finger_id
@@ -186,6 +184,7 @@ def fingerprint_function(MQTTClient):
 
         else:
             fid = match_fingerprint(State)
+            print(fid)
             if fid == "ENROLL":
                 pass
             elif fid:
@@ -193,6 +192,5 @@ def fingerprint_function(MQTTClient):
                 MQTTClient.publish(topic = "FINGERPRINT_VALIDATION", payload = payload, QoS = 1)
             else:
                 print("Invalid Fingerprint")
-        time.sleep(3)
 
     print(f"Stopped thread for fingerprint sensor")
