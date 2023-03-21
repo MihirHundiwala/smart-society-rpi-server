@@ -6,7 +6,7 @@ import time
 def send_notification(payload, recipients):
     for recipient in recipients:
         message = payload
-        message["to"] = recipient.expo_token
+        message["to"] = recipient
         requests.post('https://exp.host/--/api/v2/push/send', json = message)
 
 

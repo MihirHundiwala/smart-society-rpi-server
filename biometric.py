@@ -8,8 +8,10 @@ finger = None
 try:
     uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
     finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+    finger.empty_library()
 except:
     print("Fingerprint Sensor connection was not established")
+    
 
 def match_fingerprint(State):
     while State.mode == "ENTRY" and finger.get_image() != adafruit_fingerprint.OK:
@@ -131,7 +133,6 @@ def enroll_fingerprint(location, State):
 def find_empty_location():
     finger.read_templates()
     for i in range(1,128):
-        print(i)
         if i not in finger.templates:
             return i
     return 1
