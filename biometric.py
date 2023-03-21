@@ -8,7 +8,6 @@ finger = None
 try:
     uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
     finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
-    finger.empty_library()
 except:
     print("Fingerprint Sensor connection was not established")
     
@@ -19,8 +18,10 @@ def match_fingerprint(State):
     if State.mode == "ENROLL":
         return "ENROLL"
     if finger.image_2_tz(1) != adafruit_fingerprint.OK:
+        print("search not found 2")
         return False
     if finger.finger_search() != adafruit_fingerprint.OK:
+        print("search not found 1")
         return False
     
     return finger.finger_id
@@ -185,7 +186,6 @@ def fingerprint_function(MQTTClient):
 
         else:
             fid = match_fingerprint(State)
-            print(fid)
             if fid == "ENROLL":
                 pass
             elif fid:
