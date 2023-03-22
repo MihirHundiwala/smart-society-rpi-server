@@ -34,4 +34,7 @@ import adafruit_fingerprint
 uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
 finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 
-finger.empty_location()
+finger.empty_library()
+finger.read_templates()
+
+print(finger.templates)

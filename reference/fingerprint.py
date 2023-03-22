@@ -2,13 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 import time
-import board
 import busio
-from digitalio import DigitalInOut, Direction
 import adafruit_fingerprint
-
-led = DigitalInOut(board.D13)
-led.direction = Direction.OUTPUT
 
 #uart = busio.UART(board.TX, board.RX, baudrate=57600)
 
@@ -36,7 +31,7 @@ def get_fingerprint():
     print("Searching...")
     if finger.finger_search() != adafruit_fingerprint.OK:
         return False
-    return finger.fingerID
+    return finger.finger_id
 
 
 # pylint: disable=too-many-branches
