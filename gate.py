@@ -42,7 +42,6 @@ def gate_control_function(MQTTClient, gate_config_list):
         
         # servo.stop()
         try:
-            print("here 0")
             send_gate_open_notification(payload.get("data"), payload.get("notification_recipients"))
         except Exception as e:
             print(e)

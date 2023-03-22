@@ -4,7 +4,6 @@ import time
 
 
 def send_notification(payload, recipients):
-    print(payload, recipients)
     for recipient in recipients:
         message = payload
         message["to"] = recipient
@@ -27,7 +26,6 @@ def send_fingerprint_status(status, recipients):
 
 
 def send_gate_open_notification(data, recipients):
-    print("Here 1")
     payload = {
         'title': 'Smart Society',
         'body': 'Gate was opened',
