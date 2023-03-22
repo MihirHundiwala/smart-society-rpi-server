@@ -3,33 +3,69 @@ from mfrc522 import SimpleMFRC522
 import time
 import json
 
+sensor = None
+
+try:
+    sensor = SimpleMFRC522()
+except:
+    print("Connection with RFID reader was not established")
+
 
 def rfid_function(MQTTClient):
+    if not sensor:
+        return
+    
     rfid_function.stop = False
-    mode = "READ"
-    vehicle_id = None
-    sensor = SimpleMFRC522()
 
-    def on_register_mode(client, userdata, message):
-        nonlocal mode, vehicle_id
-        mode = "REGISTER"
-        data = json.loads(message.payload)
-        vehicle_id = data.get("vehicle_id")
-    MQTTClient.subscribe(topic=f"RFID_MODE_CONTROL", QoS=0, callback=on_register_mode)
+    class State:
+        mode = "ENTRY"
+        vehicle_id = None
+        notification_recipient = None
+
+    def on_signal_recieved(client, userdata, message):
+        nonlocal State
+        payload = json.loads(message.payload)
+        State.mode =  "ENROLL" if (payload.get("mode", "ENTRY") == "ENROLL") else "ENTRY"
+        State.notification_recipient = payload.get("expo_token", None)
+        State.vehicle_id = payload.get("vehicle_id", None)
+
+    MQTTClient.subscribe(topic=f"RFID_MODE_CONTROL", QoS=0, callback=on_signal_recieved)
+    print("Subscribed to topic 'RFID_MODE_CONTROL' ...")
 
 
     while not rfid_function.stop:
-        rfid, text = sensor.read()
-        if mode == "REGISTER":
-            payload = json.dumps({
-                "rfid": rfid,
-                "vehicle_id": vehicle_id,
-            })
-            MQTTClient.publish(topic="RFID_REGISTRATION", payload=payload)
-            mode = "READ"
+        rfid = None
+
+        try:
+            rfid, text = sensor.read()
+        except:
+            continue
+
+        if State.mode == "ENROLL":
+            if rfid:
+                payload = json.dumps({
+                    "rfid": rfid,
+                    "vehicle_id": State.vehicle_id,
+                    "enrolled": True,
+                })
+                MQTTClient.publish(topic="RFID_REGISTRATION", payload=payload, QoS=1)
+            
+            else:
+                payload = json.dumps({
+                    "vehicle_id": State.vehicle_id,
+                    "enrolled": False,
+                })
+                MQTTClient.publish(topic="RFID_REGISTRATION", payload=payload, QoS=1)
+        
+            State.mode = "ENTRY"
+
         else:
             payload = json.dumps({
                 "rfid": rfid,
             })
             MQTTClient.publish(topic="RFID_VALIDATION", payload=payload)
-        time.sleep(5)
+        
+        time.sleep(2)
+
+    print(f"Stopped thread for rfid sensor")
+    

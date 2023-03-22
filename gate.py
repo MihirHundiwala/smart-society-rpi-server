@@ -1,5 +1,6 @@
 import time, json
 import RPi.GPIO as GPIO 
+from notifications import send_gate_open_notification
 
 def gate_control_function(MQTTClient, gate_config_list):
     
@@ -13,7 +14,8 @@ def gate_control_function(MQTTClient, gate_config_list):
     
     def open_gate(client, userdata, message):
         payload = json.loads(message.payload)
-        print("Opening -", payload.get("type"))
+        print("Opening gate")
+
         # gate_id = payload.get("gate_id")
         # gate_config = gate_config_list[gate_id]
 
@@ -39,7 +41,11 @@ def gate_control_function(MQTTClient, gate_config_list):
         # GPIO.output(gate_config['red_led_pin'], GPIO.HIGH)
         
         # servo.stop()
-        #GPIO.cleanup()
+        try:
+            send_gate_open_notification(payload.get("data"), payload.get("notification_recipients"))
+        except Exception as e:
+            print(e)
+            pass
     
 
     print("Subscribing to topic 'GATE_CONTROL' ...")

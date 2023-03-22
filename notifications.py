@@ -10,11 +10,6 @@ def send_notification(payload, recipients):
         requests.post('https://exp.host/--/api/v2/push/send', json = message)
 
 
-def send(payload, recipients):
-    notification_thread = threading.Thread(target=send_notification, args=(payload, recipients))
-    notification_thread.start()
-    time.sleep(1)
-
 def send_fingerprint_status(status, recipients):
     payload = {
         'title': 'Smart Society',
@@ -23,10 +18,23 @@ def send_fingerprint_status(status, recipients):
             'notification_type': 'update_status',
             'payload': {
                 'type': "update_fingerprint_status",
-                'status': status,
+                'data': status,
             }
         }
     }
-    notification_thread = threading.Thread(target=send_notification, args=(payload, recipients))
-    notification_thread.start()
-    time.sleep(1)
+    send_notification(payload, recipients)
+
+
+def send_gate_open_notification(data, recipients):
+    payload = {
+        'title': 'Smart Society',
+        'body': 'Gate was opened',
+        'data': {
+            'notification_type': 'update_status',
+            'payload': {
+                'type': 'update_gate_entry',
+                'data': data,
+            },
+        }
+    }
+    send_notification(payload, recipients)

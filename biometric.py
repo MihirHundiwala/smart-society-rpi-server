@@ -9,7 +9,7 @@ try:
     uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
     finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 except:
-    print("Fingerprint Sensor connection was not established")
+    print("Connection with fingerprint sensor was not established")
     
 
 def match_fingerprint(State):
@@ -155,8 +155,8 @@ def fingerprint_function(MQTTClient):
         State.notification_recipient = payload.get("expo_token", None)
         State.fingerprint_id = payload.get("fingerprint_id", None)
         
-    MQTTClient.subscribe(topic="CONTROL_FINGERPRINT_SENSOR", QoS=1, callback=on_signal_recieved)
-    print("Subscribed to topic 'CONTROL_FINGERPRINT_SENSOR' ...")
+    MQTTClient.subscribe(topic="FINGERPRINT_SENSOR_MODE_CONTROL", QoS=1, callback=on_signal_recieved)
+    print("Subscribed to topic 'FINGERPRINT_SENSOR_MODE_CONTROL' ...")
 
 
     while not fingerprint_function.stop:
