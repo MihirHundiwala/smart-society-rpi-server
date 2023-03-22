@@ -13,7 +13,6 @@ def gate_control_function(MQTTClient, gate_config_list):
             time.sleep(0.5)  # Sleep for 1 second
     
     def open_gate(client, userdata, message):
-        payload = json.loads(message.payload)
         print("Opening gate")
 
         # gate_id = payload.get("gate_id")
@@ -41,11 +40,6 @@ def gate_control_function(MQTTClient, gate_config_list):
         # GPIO.output(gate_config['red_led_pin'], GPIO.HIGH)
         
         # servo.stop()
-        try:
-            send_gate_open_notification(payload.get("data"), payload.get("notification_recipients"))
-        except Exception as e:
-            print(e)
-            pass
     
 
     print("Subscribing to topic 'GATE_CONTROL' ...")

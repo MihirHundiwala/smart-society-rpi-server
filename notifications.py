@@ -25,16 +25,16 @@ def send_fingerprint_status(status, recipients):
     send_notification(payload, recipients)
 
 
-def send_gate_open_notification(data, recipients):
-    payload = {
-        'title': 'Smart Society',
-        'body': 'Gate was opened',
-        'data': {
-            'notification_type': 'update_status',
-            'payload': {
-                'type': 'update_gate_entry',
-                'data': data,
-            },
-        }
-    }
-    send_notification(payload, recipients)
+# def send_gate_open_notification(data, recipients):
+#     payload = {
+#         'title': 'Smart Society',
+#         'body': 'Gate was opened',
+#         'data': {
+#             'notification_type': 'update_status',
+#             'payload': {
+#                 'type': 'update_gate_entry',
+#                 'data': data,
+#             },
+#         }
+#     }
+#     send_notification(payload, recipients)
