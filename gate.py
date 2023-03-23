@@ -1,6 +1,5 @@
 import time, json
 import RPi.GPIO as GPIO 
-from notifications import send_gate_open_notification
 
 def gate_control_function(MQTTClient, gate_config_list):
     
@@ -18,6 +17,9 @@ def gate_control_function(MQTTClient, gate_config_list):
         gate_id = str(payload.get("gate_id"))
         gate_config = gate_config_list[gate_id]
 
+        GPIO.setup(gate_config['red_led_pin'], GPIO.OUT)
+        GPIO.setup(gate_config['green_led_pin'], GPIO.OUT)
+
         GPIO.output(gate_config['red_led_pin'], GPIO.LOW)
         blinkled(gate_config['green_led_pin'])
         
@@ -34,7 +36,7 @@ def gate_control_function(MQTTClient, gate_config_list):
             servo.ChangeDutyCycle(0)
         
         setAngle(90)
-        time.sleep(10) # Close after 10 seconds
+        time.sleep(5) # Close after 5 seconds
         blinkled(gate_config['red_led_pin'])
         setAngle(0)
         GPIO.output(gate_config['red_led_pin'], GPIO.HIGH)
