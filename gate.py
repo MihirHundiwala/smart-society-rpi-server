@@ -1,6 +1,5 @@
 import time, json
 import RPi.GPIO as GPIO 
-from notifications import send_gate_open_notification
 from config import gate_config_list
 
 def blinkled(pin):

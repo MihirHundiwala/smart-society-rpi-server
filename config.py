@@ -22,20 +22,20 @@ plant_config_list = [
 gate_config_list = {
     # Pedestrian gate
     '1' : {
-        'gate_id': '1',
-        'servo_pin': '16',
-        'green_led_pin': '35',
-        'red_led_pin': '37',
+        'gate_id': 1,
+        'servo_pin': 16,
+        'green_led_pin': 35,
+        'red_led_pin': 37,
         'angle1': 90,
         'angle2': 0,
     },
     # Vehicle gate
     '2' : {
-        'gate_id': '2',
-        'servo_pin': '18',
-        'green_led_pin': '36',
-        'red_led_pin': '38',
-        'angle1': 90,
-        'angle2': 0,
+        'gate_id': 2,
+        'servo_pin': 18,
+        'green_led_pin': 36,
+        'red_led_pin': 38,
+        'angle1': 0,
+        'angle2': 90,
     }
 }

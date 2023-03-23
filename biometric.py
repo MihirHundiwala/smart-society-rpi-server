@@ -2,6 +2,8 @@ import time, json
 import serial
 import adafruit_fingerprint
 from notifications import send_fingerprint_status
+from gate import open_gate
+
 
 finger = None
 
