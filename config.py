@@ -23,15 +23,15 @@ gate_config_list = {
     # Pedestrian gate
     '1' : {
         'gate_id': '1',
-        'servo_pin': '12',
+        'servo_pin': '16',
         'green_led_pin': '36',
         'red_led_pin': '38',
     },
     # Vehicle gate
-    # '2' : {
-    #     'gate_id': '2',
-    #     'servo_pin': '',
-    #     'green_led_pin': '',
-    #     'red_led_pin': '',
-    # }
+    '2' : {
+        'gate_id': '2',
+        'servo_pin': '18',
+        'green_led_pin': '',
+        'red_led_pin': '',
+    }
 }
