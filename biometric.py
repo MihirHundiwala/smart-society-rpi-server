@@ -30,14 +30,12 @@ def enroll_fingerprint(location, State):
     image = None
     message = ""
 
-    print(location, State.notification_recipient)
-
     for i in range(1, 3):
         if i == 1:
-            print("Place finger on sensor...")
+            print("Place finger on sensor...", end="")
             send_fingerprint_status("Place finger on sensor...", recipients=[State.notification_recipient])
         else:
-            print("Place same finger again...")
+            print("Place same finger again...", end="")
             send_fingerprint_status("Place same finger again...", recipients=[State.notification_recipient])
 
         while True and State.mode == "ENROLL":
@@ -49,7 +47,7 @@ def enroll_fingerprint(location, State):
             if image == adafruit_fingerprint.NOFINGER:
                 print(".", end="")
             elif image == adafruit_fingerprint.IMAGEFAIL:
-                print("\nImaging error")
+                print("Imaging error")
                 send_fingerprint_status("Imaging error", recipients=[State.notification_recipient])
                 return False, location, image, "Imaging error"
             else:
@@ -191,6 +189,7 @@ def fingerprint_function(MQTTClient):
             elif fid:
                 print("Fingerprint found at location,", fid)
                 payload = json.dumps({"fid":fid})
+                open_gate(gate_id = 1)
                 MQTTClient.publish(topic = "FINGERPRINT_VALIDATION", payload = payload, QoS = 1)
             else:
                 print("Invalid Fingerprint")
