@@ -10,14 +10,14 @@ finger = None
 
 def connect_sensor():
     global finger
-    try:
-        uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
-        finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
-        print("Connection with fingerprint sensor was established")
+    # try:
+    uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
+    finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+    print("Connection with fingerprint sensor was established")
 
-    except Exception as e:
-        print(e)
-        print("Connection with fingerprint sensor was not established")
+    # except Exception as e:
+    #     print(e)
+    #     print("Connection with fingerprint sensor was not established")
 
 connect_sensor()
     
@@ -162,6 +162,7 @@ def fingerprint_function(MQTTClient):
 
     def on_signal_recieved(client, userdata, message):
         nonlocal State
+        print("yes")
         payload = json.loads(message.payload)
         State.mode =  "ENROLL" if (payload.get("mode", "ENTRY") == "ENROLL") else "ENTRY"
         State.notification_recipient = payload.get("expo_token", None)
@@ -202,7 +203,7 @@ def fingerprint_function(MQTTClient):
                 elif fid:
                     print("Fingerprint found at location,", fid)
                     payload = json.dumps({"fid":fid})
-                    open_gate(gate_id = 1, MQTTClient=MQTTClient, payload=payload)
+                    open_gate(gate_id = 1, MQTTClient=MQTTClient, payload=payload, topic="FINGERPRINT_VALIDATION")
                 else:
                     print("Invalid Fingerprint")
 

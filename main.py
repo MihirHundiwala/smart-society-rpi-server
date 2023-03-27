@@ -1,6 +1,8 @@
 import threading
 from aws.connections import MQTTClient
 import RPi.GPIO as GPIO
+from mfrc522 import SimpleMFRC522
+
 
 from gate import gate_control_function
 from config import gate_config_list
@@ -31,31 +33,31 @@ thread_list = []
 
 # _____________________________________________________
 
-for light_config in light_config_list:
-    thread = threading.Thread(
-        target=light_control_function,
-        name=f"thread-light-{light_config['light_id']}",
-        args=(MQTTClient, light_config)
-    )
-    thread_list.append(thread)
-    thread.start()
-    print(f"Started thread for lights [light-{light_config['light_id']}]...")
+# for light_config in light_config_list:
+#     thread = threading.Thread(
+#         target=light_control_function,
+#         name=f"thread-light-{light_config['light_id']}",
+#         args=(MQTTClient, light_config)
+#     )
+#     thread_list.append(thread)
+#     thread.start()
+#     print(f"Started thread for lights [light-{light_config['light_id']}]...")
 
-# _____________________________________________________
+# # _____________________________________________________
 
-for plant_config in plant_config_list:
-    thread = threading.Thread(
-        target=plant_control_function,
-        name=f"thread-plant-{plant_config['plant_id']}",
-        args=(MQTTClient, plant_config)
-    )
-    thread_list.append(thread)
-    thread.start()
-    print(f"Started thread for plants [plant-{plant_config['plant_id']}]...")
+# for plant_config in plant_config_list:
+#     thread = threading.Thread(
+#         target=plant_control_function,
+#         name=f"thread-plant-{plant_config['plant_id']}",
+#         args=(MQTTClient, plant_config)
+#     )
+#     thread_list.append(thread)
+#     thread.start()
+#     print(f"Started thread for plants [plant-{plant_config['plant_id']}]...")
 
-# _____________________________________________________
+# # _____________________________________________________
 
-gate_control_function(MQTTClient, gate_config_list)
+# gate_control_function(MQTTClient, gate_config_list)
 
 # _____________________________________________________
 
@@ -69,19 +71,8 @@ fingerprint_thread.start()
 
 # _____________________________________________________
 
-rfid_thread = threading.Thread(
-    target=rfid_function,
-    name=f"thread-rfid-reader",
-    args=(MQTTClient,)
-)
-thread_list.append(rfid_thread)
-rfid_thread.start()
-
-# _____________________________________________________
-
 try:
-    while True:
-        pass
+    rfid_function(MQTTClient=MQTTClient)
 
 except KeyboardInterrupt:
     light_control_function.stop = True

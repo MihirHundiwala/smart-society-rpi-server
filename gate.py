@@ -12,7 +12,7 @@ def blinkled(pin):
         time.sleep(0.5)  # Sleep for 1 second
 
 
-def open_gate(gate_id, MQTTClient, payload):
+def open_gate(gate_id, MQTTClient, payload, topic):
         print("Opening gate")
         gate_config = gate_config_list[gate_id]
 
@@ -35,7 +35,7 @@ def open_gate(gate_id, MQTTClient, payload):
             servo.ChangeDutyCycle(0)
         
         setAngle(gate_config["angle1"])
-        iot_publish(MQTTClient, topic = "FINGERPRINT_VALIDATION", payload = payload)
+        iot_publish(MQTTClient, topic = topic, payload = payload)
         time.sleep(5) # Close after 10 seconds
         blinkled(gate_config['red_led_pin'])
         setAngle(gate_config["angle2"])

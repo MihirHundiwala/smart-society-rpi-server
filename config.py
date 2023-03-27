@@ -30,12 +30,12 @@ gate_config_list = {
         'angle2': 0,
     },
     # Vehicle gate
-    # 2 : {
-    #     'gate_id': 2,
-    #     'servo_pin': 18,
-    #     'green_led_pin': 36,
-    #     'red_led_pin': 38,
-    #     'angle1': 0,
-    #     'angle2': 90,
-    # }
+    2 : {
+        'gate_id': 2,
+        'servo_pin': 18,
+        'green_led_pin': 36,
+        'red_led_pin': 38,
+        'angle1': 0,
+        'angle2': 90,
+    }
 }
