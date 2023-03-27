@@ -1,11 +1,11 @@
 light_config_list = [
     # {
-    #     'light_id': '1',
+    #     'light_id': 1,
     #     'ldr_pin': '',
     #     'output_pin': '',
     # },
     # {
-    #     'light_id': '2',
+    #     'light_id': 2,
     #     'ldr_pin': '',
     #     'output_pin': '',
     # },
@@ -13,15 +13,15 @@ light_config_list = [
 
 plant_config_list = [
     # {
-    #     'plant_id': '1',
-    #     'sms_pin': '8',
-    #     'output_pin': '10',
+    #     'plant_id': 1,
+    #     'sms_pin': 8,
+    #     'output_pin': 10,
     # }
 ]
 
 gate_config_list = {
     # Pedestrian gate
-    '1' : {
+    1 : {
         'gate_id': 1,
         'servo_pin': 16,
         'green_led_pin': 35,
@@ -30,12 +30,12 @@ gate_config_list = {
         'angle2': 0,
     },
     # Vehicle gate
-    '2' : {
-        'gate_id': 2,
-        'servo_pin': 18,
-        'green_led_pin': 36,
-        'red_led_pin': 38,
-        'angle1': 0,
-        'angle2': 90,
-    }
+    # 2 : {
+    #     'gate_id': 2,
+    #     'servo_pin': 18,
+    #     'green_led_pin': 36,
+    #     'red_led_pin': 38,
+    #     'angle1': 0,
+    #     'angle2': 90,
+    # }
 }
