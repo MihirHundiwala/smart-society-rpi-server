@@ -12,11 +12,16 @@ light_config_list = [
 ]
 
 plant_config_list = [
-    # {
-    #     'plant_id': 1,
-    #     'sms_pin': 8,
-    #     'output_pin': 10,
-    # }
+    {
+        'plant_id': 1,
+        'sms_pin': 29,
+        'output_pin': 35,
+    },
+    {
+        'plant_id': 2,
+        'sms_pin': 31,
+        'output_pin': 37,
+    },
 ]
 
 gate_config_list = {

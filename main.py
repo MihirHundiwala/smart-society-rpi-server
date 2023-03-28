@@ -45,15 +45,15 @@ thread_list = []
 
 # # _____________________________________________________
 
-# for plant_config in plant_config_list:
-#     thread = threading.Thread(
-#         target=plant_control_function,
-#         name=f"thread-plant-{plant_config['plant_id']}",
-#         args=(MQTTClient, plant_config)
-#     )
-#     thread_list.append(thread)
-#     thread.start()
-#     print(f"Started thread for plants [plant-{plant_config['plant_id']}]...")
+for plant_config in plant_config_list:
+    thread = threading.Thread(
+        target=plant_control_function,
+        name=f"thread-plant-{plant_config['plant_id']}",
+        args=(MQTTClient, plant_config)
+    )
+    thread_list.append(thread)
+    thread.start()
+    print(f"Started thread for plants [plant-{plant_config['plant_id']}]...")
 
 # # _____________________________________________________
 

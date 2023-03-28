@@ -14,6 +14,8 @@ except:
 
 def rfid_function(MQTTClient):
     global sensor
+    if not sensor:
+        return
     
     rfid_function.stop = False
 

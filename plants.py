@@ -3,13 +3,14 @@ import time
 import json
 from datetime import datetime, timedelta
 
+GPIO.setmode(GPIO.BOARD)
 
 def plant_control_function(MQTTClient, plant_config):
 
     plant_control_function.stop = False             # Function attribute used for stopping thread
-
-    sms_pin = int(plant_config['sms_pin'])          # Pin for taking sensor inputs
-    output_pin = int(plant_config['output_pin'])    # Pin for giving output for water pump motors
+    plant_id = plant_config["plant_id"]
+    sms_pin = plant_config['sms_pin']         # Pin for taking sensor inputs
+    output_pin = plant_config['output_pin']    # Pin for giving output for water pump motors
     GPIO.setup(sms_pin, GPIO.IN)
     GPIO.setup(output_pin, GPIO.OUT, initial=GPIO.HIGH)
 
@@ -24,8 +25,8 @@ def plant_control_function(MQTTClient, plant_config):
     stop_motor_on = datetime.min
     cooldown = datetime.min
 
-    pour_water_time = 5         # in seconds
-    cooldown_time = 20          # in seconds
+    pour_water_time = 2        # in seconds
+    cooldown_time = 5          # in seconds
 
     def on_plant_signal_received(client, userdata, message):
         nonlocal updated_mode
@@ -38,31 +39,28 @@ def plant_control_function(MQTTClient, plant_config):
                 f"Payload Object has an error.\nPayload: {payload}\nException Error: {err}")
 
     def auto_mode(sms_pin):
-        nonlocal stop_motor_on, cooldown, pour_water_time, cooldown_time
+        nonlocal stop_motor_on, cooldown, pour_water_time, cooldown_time, plant_id
         try:
             if stop_motor_on >= datetime.now():
-                print("Keeping motor on till time specified")
+                print(f"PlantID {plant_id} Keeping motor on till time specified")
                 return GPIO.LOW
 
             if cooldown >= datetime.now():
-                print(
-                    f"On cooldown for {(cooldown-datetime.now()).total_seconds()} seconds")
+                print(f"PlantID {plant_id} On cooldown for {(cooldown-datetime.now()).total_seconds()} seconds")
                 return GPIO.HIGH
 
             elif GPIO.input(sms_pin):
-                print(
-                    f"Water Inadequate, no cooldown period detected, pour water for {pour_water_time} seconds")
+                print(f"PlantID {plant_id} Water Inadequate, no cooldown period detected, pour water for {pour_water_time} seconds")
                 stop_motor_on = datetime.now() + timedelta(seconds=pour_water_time)
                 cooldown = stop_motor_on + timedelta(seconds=cooldown_time)
                 return GPIO.LOW
 
             else:
-                print("Water Adequate")
+                print(f"PlantID {plant_id} Water Adequate")
                 return GPIO.HIGH
 
         except Exception as err:
-            print(
-                "Error while receiving input from soil moisture sensor.\n Exception:", err)
+            print("Error while receiving input from soil moisture sensor.\n Exception:", err)
 
         return GPIO.HIGH
 

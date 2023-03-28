@@ -10,14 +10,13 @@ finger = None
 
 def connect_sensor():
     global finger
-    # try:
-    uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
-    finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
-    print("Connection with fingerprint sensor was established")
-
-    # except Exception as e:
-    #     print(e)
-    #     print("Connection with fingerprint sensor was not established")
+    try:
+        uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
+        finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+        print("Connection with fingerprint sensor was established")
+    except Exception as e:
+        print(e)
+        print("Connection with fingerprint sensor was not established")
 
 connect_sensor()
     
