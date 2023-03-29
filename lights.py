@@ -4,22 +4,20 @@ import json
 
 
 def light_control_function(MQTTClient, light_config):
-
+    Mode_To_GPIO_Signal = {
+        "ON": GPIO.LOW,
+        "OFF": GPIO.HIGH,
+    }
     # Function attribute used for stopping thread
     light_control_function.stop = False
 
     # Pin for taking sensor inputs
     ldr_pin = int(light_config['ldr_pin'])
     output_pin = int(light_config['output_pin'])
-    GPIO.setup(output_pin, GPIO.OUT)
+    GPIO.setup(output_pin, GPIO.OUT, initial=Mode_To_GPIO_Signal["OFF"])
 
     updated_mode = "AUTO"                       # Default
     current_mode = "AUTO"
-
-    Mode_To_GPIO_Signal = {
-        "ON": GPIO.HIGH,
-        "OFF": GPIO.LOW,
-    }
 
     def on_light_signal_received(client, userdata, message):
         nonlocal updated_mode
@@ -28,8 +26,7 @@ def light_control_function(MQTTClient, light_config):
             updated_mode = payload.get("mode", "AUTO")
             print(payload.get("message"))
         except Exception as err:
-            print(
-                f"Payload Object has an error.\nPayload: {payload}\nException Error: {err}")
+            print(f"Payload Object has an error.\nPayload: {payload}\nException Error: {err}")
 
     def auto_mode(ldr_pin):
         try:
@@ -42,17 +39,16 @@ def light_control_function(MQTTClient, light_config):
             while (GPIO.input(ldr_pin) == GPIO.LOW):
                 count += 1
 
-            print(
-                f"Sensor Output for AUTO mode({light_config['light_id']}): {count}")
-            if count < 69999:
-                return GPIO.LOW
+            print(f"Sensor Output for AUTO mode({light_config['light_id']}): {count}")
+            if count < light_config["threshold"]:
+                return Mode_To_GPIO_Signal["OFF"]
             else:
-                return GPIO.HIGH
+                return Mode_To_GPIO_Signal["ON"]
 
         except Exception as err:
             print("Error while receiving input from sensor.\n Exception:", err)
 
-        return GPIO.LOW
+        return Mode_To_GPIO_Signal["ON"]
 
     MQTTClient.subscribe(
         topic=f"LIGHT_MODE_CONTROL/{light_config['light_id']}", QoS=0, callback=on_light_signal_received)

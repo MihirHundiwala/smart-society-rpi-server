@@ -33,15 +33,15 @@ thread_list = []
 
 # _____________________________________________________
 
-# for light_config in light_config_list:
-#     thread = threading.Thread(
-#         target=light_control_function,
-#         name=f"thread-light-{light_config['light_id']}",
-#         args=(MQTTClient, light_config)
-#     )
-#     thread_list.append(thread)
-#     thread.start()
-#     print(f"Started thread for lights [light-{light_config['light_id']}]...")
+for light_config in light_config_list:
+    thread = threading.Thread(
+        target=light_control_function,
+        name=f"thread-light-{light_config['light_id']}",
+        args=(MQTTClient, light_config)
+    )
+    thread_list.append(thread)
+    thread.start()
+    print(f"Started thread for lights [light-{light_config['light_id']}]...")
 
 # # _____________________________________________________
 

@@ -1,27 +1,35 @@
 light_config_list = [
     # {
     #     'light_id': 1,
-    #     'ldr_pin': '',
-    #     'output_pin': '',
+    #     'ldr_pin': 3,
+    #     'output_pin': 11,
+    #     'threshold': 10000,
     # },
     # {
     #     'light_id': 2,
-    #     'ldr_pin': '',
-    #     'output_pin': '',
+    #     'ldr_pin': 5,
+    #     'output_pin': 13,
+    #     'threshold': 10000,
+    # },
+    # {
+    #     'light_id': 3,
+    #     'ldr_pin': 7,
+    #     'output_pin': 15,
+    #     'threshold': 10000,
     # },
 ]
 
 plant_config_list = [
-    {
-        'plant_id': 1,
-        'sms_pin': 29,
-        'output_pin': 35,
-    },
-    {
-        'plant_id': 2,
-        'sms_pin': 31,
-        'output_pin': 37,
-    },
+    # {
+    #     'plant_id': 1,
+    #     'sms_pin': 33,
+    #     'output_pin': 29,
+    # },
+    # {
+    #     'plant_id': 2,
+    #     'sms_pin': 35,
+    #     'output_pin': 31,
+    # },
 ]
 
 gate_config_list = {
@@ -29,8 +37,8 @@ gate_config_list = {
     1 : {
         'gate_id': 1,
         'servo_pin': 16,
-        'green_led_pin': 35,
-        'red_led_pin': 37,
+        'green_led_pin': 32,
+        'red_led_pin': 36,
         'angle1': 90,
         'angle2': 0,
     },
@@ -38,8 +46,8 @@ gate_config_list = {
     2 : {
         'gate_id': 2,
         'servo_pin': 18,
-        'green_led_pin': 36,
-        'red_led_pin': 38,
+        'green_led_pin': 38,
+        'red_led_pin': 40,
         'angle1': 0,
         'angle2': 90,
     }

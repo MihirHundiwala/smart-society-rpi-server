@@ -64,10 +64,10 @@ def rfid_function(MQTTClient):
             payload = json.dumps({
                 "rfid": rfid,
             })
-            print("I am here")
-            # open_gate(gate_id=2, MQTTClient=MQTTClient, payload=payload, topic="RFID_VALIDATION")
-            MQTTClient.publish(topic="RFID_VALIDATION", QoS=1, payload=payload)
-            print("here 2")
+            # print("I am here")
+            open_gate(gate_id=2, MQTTClient=MQTTClient, payload=payload, topic="RFID_VALIDATION")
+            # MQTTClient.publish(topic="RFID_VALIDATION", QoS=1, payload=payload)
+            # print("here 2")
         
         time.sleep(2)
 

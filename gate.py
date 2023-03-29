@@ -45,6 +45,10 @@ def open_gate(gate_id, MQTTClient, payload, topic):
 
 
 def gate_control_function(MQTTClient, gate_config_list):
+
+    for gate_config in gate_config_list:
+        GPIO.output(gate_config['red_led_pin'], GPIO.HIGH)
+
     
     def open_gate_on_publish(client, userdata, message):
         print("Opening gate")
@@ -55,7 +59,6 @@ def gate_control_function(MQTTClient, gate_config_list):
         GPIO.setup(gate_config['red_led_pin'], GPIO.OUT)
         GPIO.setup(gate_config['green_led_pin'], GPIO.OUT)
 
-        GPIO.output(gate_config['red_led_pin'], GPIO.LOW)
         blinkled(gate_config['green_led_pin'])
         
         GPIO.setup(gate_config['servo_pin'], GPIO.OUT)
