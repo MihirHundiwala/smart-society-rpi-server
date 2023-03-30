@@ -1,7 +1,7 @@
 import time, json
 import RPi.GPIO as GPIO 
 from config import gate_config_list
-from aws.functions import iot_publish
+from aws.functions import publish
 
 def blinkled(pin):
     GPIO.setup(pin, GPIO.OUT)
@@ -35,7 +35,7 @@ def open_gate(gate_id, MQTTClient, payload, topic):
             servo.ChangeDutyCycle(0)
         
         setAngle(gate_config["angle1"])
-        iot_publish(MQTTClient, topic = topic, payload = payload)
+        publish(MQTTClient, topic = topic, payload = payload)
         time.sleep(5) # Close after 10 seconds
         blinkled(gate_config['red_led_pin'])
         setAngle(gate_config["angle2"])

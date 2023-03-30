@@ -3,7 +3,7 @@ import serial
 import adafruit_fingerprint
 from notifications import send_fingerprint_status
 from gate import open_gate
-from aws.functions import iot_publish
+from aws.functions import publish
 
 
 finger = None
@@ -183,7 +183,7 @@ def fingerprint_function(MQTTClient):
                         "fid": location,
                         "enrolled": True,
                     })
-                    MQTTClient.publish(topic = "FINGERPRINT_REGISTRATION", payload = payload, QoS = 1)
+                    publish(MQTTClient=MQTTClient, topic = "FINGERPRINT_REGISTRATION", payload = payload)
 
                 else:
                     payload = json.dumps({
@@ -191,7 +191,7 @@ def fingerprint_function(MQTTClient):
                         "message": message,
                         "enrolled": False
                     })
-                    MQTTClient.publish(topic = "FINGERPRINT_REGISTRATION", payload = payload, QoS = 1)
+                    publish(MQTTClient=MQTTClient, topic = "FINGERPRINT_REGISTRATION", payload = payload)
 
                 State.mode = "ENTRY"
 

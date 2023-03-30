@@ -50,8 +50,7 @@ def light_control_function(MQTTClient, light_config):
 
         return Mode_To_GPIO_Signal["ON"]
 
-    MQTTClient.subscribe(
-        topic=f"LIGHT_MODE_CONTROL/{light_config['light_id']}", QoS=0, callback=on_light_signal_received)
+    MQTTClient.subscribe(topic=f"LIGHT_MODE_CONTROL/{light_config['light_id']}", QoS=0, callback=on_light_signal_received)
     print("Subscribed to topic 'LIGHT_MODE_CONTROL' ...")
 
     while not light_control_function.stop:

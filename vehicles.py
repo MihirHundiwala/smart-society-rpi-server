@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 from gate import open_gate
+from aws.functions import publish
 import time
 import json
 
@@ -49,14 +50,14 @@ def rfid_function(MQTTClient):
                     "vehicle_id": State.vehicle_id,
                     "enrolled": True,
                 })
-                MQTTClient.publish(topic="RFID_REGISTRATION", payload=payload, QoS=1)
+                publish(MQTTClient=MQTTClient, topic="RFID_REGISTRATION", payload=payload)
             
             else:
                 payload = json.dumps({
                     "vehicle_id": State.vehicle_id,
                     "enrolled": False,
                 })
-                MQTTClient.publish(topic="RFID_REGISTRATION", payload=payload, QoS=1)
+                publish(MQTTClient=MQTTClient, topic="RFID_REGISTRATION", payload=payload)
         
             State.mode = "ENTRY"
 
@@ -66,7 +67,7 @@ def rfid_function(MQTTClient):
             })
             # print("I am here")
             open_gate(gate_id=2, MQTTClient=MQTTClient, payload=payload, topic="RFID_VALIDATION")
-            # MQTTClient.publish(topic="RFID_VALIDATION", QoS=1, payload=payload)
+            # publish(MQTTClient=MQTTClient ,topic="RFID_VALIDATION", payload=payload)
             # print("here 2")
         
         time.sleep(2)
