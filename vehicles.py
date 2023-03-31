@@ -66,8 +66,8 @@ def rfid_function(MQTTClient):
                 "rfid": rfid,
             })
             # print("I am here")
-            open_gate(gate_id=2, MQTTClient=MQTTClient, payload=payload, topic="RFID_VALIDATION")
-            # publish(MQTTClient=MQTTClient ,topic="RFID_VALIDATION", payload=payload)
+            # open_gate(gate_id=2, MQTTClient=MQTTClient, payload=payload, topic="RFID_VALIDATION")
+            publish(MQTTClient=MQTTClient ,topic="RFID_VALIDATION", payload=payload)
             # print("here 2")
         
         time.sleep(2)
