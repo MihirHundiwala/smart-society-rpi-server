@@ -4,26 +4,28 @@ import json
 
 
 def light_control_function(MQTTClient, light_config):
-    Mode_To_GPIO_Signal = {
-        "ON": GPIO.LOW,
-        "OFF": GPIO.HIGH,
-    }
     # Function attribute used for stopping thread
     light_control_function.stop = False
 
     # Pin for taking sensor inputs
     ldr_pin = int(light_config['ldr_pin'])
     output_pin = int(light_config['output_pin'])
-    GPIO.setup(output_pin, GPIO.OUT, initial=Mode_To_GPIO_Signal["OFF"])
+    GPIO.setup(output_pin, GPIO.OUT, initial=Mode_To_GPIO_Signal["AUTO"])
 
-    updated_mode = "AUTO"                       # Default
-    current_mode = "AUTO"
+    Mode_To_GPIO_Signal = {
+        "ON": GPIO.LOW,
+        "OFF": GPIO.HIGH,
+        "AUTO": auto_mode(ldr_pin),
+    }
+
+    class Mode:
+        mode = "AUTO"
 
     def on_light_signal_received(client, userdata, message):
-        nonlocal updated_mode
+        nonlocal Mode
         try:
             payload = json.loads(message.payload)
-            updated_mode = payload.get("mode", "AUTO")
+            Mode.mode = payload.get("mode", "AUTO")
             print(payload.get("message"))
         except Exception as err:
             print(f"Payload Object has an error.\nPayload: {payload}\nException Error: {err}")
@@ -54,12 +56,6 @@ def light_control_function(MQTTClient, light_config):
     print("Subscribed to topic 'LIGHT_MODE_CONTROL' ...")
 
     while not light_control_function.stop:
-        if updated_mode == "AUTO":
-            current_mode = "AUTO"
-            GPIO.output(output_pin, auto_mode(ldr_pin))
-
-        elif current_mode != updated_mode:
-            current_mode = updated_mode
-            GPIO.output(output_pin, Mode_To_GPIO_Signal[current_mode])
+        GPIO.output(output_pin, Mode_To_GPIO_Signal[Mode.mode])
 
     print(f"Stopped thread for light-{light_config['light_id']}")
