@@ -58,7 +58,9 @@ def light_control_function(MQTTClient, light_config):
     while not light_control_function.stop:
         if Mode.mode == "AUTO":
             GPIO.output(output_pin, auto_mode(ldr_pin))
-        else:
-            GPIO.output(output_pin, Mode_To_GPIO_Signal[Mode.mode])
+        elif Mode.mode == "ON":
+            GPIO.output(output_pin, Mode_To_GPIO_Signal["ON"])
+        elif Mode.mode == "OFF":
+            GPIO.output(output_pin, Mode_To_GPIO_Signal["OFF"])
 
     print(f"Stopped thread for light-{light_config['light_id']}")
