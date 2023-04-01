@@ -6,6 +6,7 @@ import time
 import json
 
 sensor = None
+
 try:
     sensor = SimpleMFRC522()
     print("Connection with RFID reader was established")
@@ -17,7 +18,7 @@ def rfid_function(MQTTClient):
     global sensor
     if not sensor:
         return
-    
+
     rfid_function.stop = False
 
     class State:
@@ -28,11 +29,13 @@ def rfid_function(MQTTClient):
     def on_signal_recieved(client, userdata, message):
         nonlocal State
         payload = json.loads(message.payload)
-        State.mode =  "ENROLL" if (payload.get("mode", "ENTRY") == "ENROLL") else "ENTRY"
+        State.mode = "ENROLL" if (payload.get(
+            "mode", "ENTRY") == "ENROLL") else "ENTRY"
         State.notification_recipient = payload.get("expo_token", None)
         State.vehicle_id = payload.get("vehicle_id", None)
 
-    MQTTClient.subscribe(topic=f"RFID_MODE_CONTROL", QoS=0, callback=on_signal_recieved)
+    MQTTClient.subscribe(topic=f"RFID_MODE_CONTROL",
+                         QoS=0, callback=on_signal_recieved)
     print("Subscribed to topic 'RFID_MODE_CONTROL' ...")
 
     while not rfid_function.stop:
@@ -50,27 +53,30 @@ def rfid_function(MQTTClient):
                     "vehicle_id": State.vehicle_id,
                     "enrolled": True,
                 })
-                publish(MQTTClient=MQTTClient, topic="RFID_REGISTRATION", payload=payload)
-            
+                MQTTClient.publish(topic="RFID_REGISTRATION",
+                                   payload=payload, QoS=1)
+
             else:
                 payload = json.dumps({
                     "vehicle_id": State.vehicle_id,
                     "enrolled": False,
                 })
-                publish(MQTTClient=MQTTClient, topic="RFID_REGISTRATION", payload=payload)
-        
+                MQTTClient.publish(topic="RFID_REGISTRATION",
+                                   payload=payload, QoS=1)
+
             State.mode = "ENTRY"
 
         else:
             payload = json.dumps({
                 "rfid": rfid,
             })
-            # print("I am here")
-            # open_gate(gate_id=2, MQTTClient=MQTTClient, payload=payload, topic="RFID_VALIDATION")
-            publish(MQTTClient=MQTTClient ,topic="RFID_VALIDATION", payload=payload)
-            # print("here 2")
-        
-        time.sleep(2)
+            # try:
+            #     MQTTClient.publish(
+            #         topic="RFID_VALIDATION", QoS=1, payload=payload)
+            # except Exception as e:
+            #     print(e)
+            open_gate(gate_id=2)  # To be commented
+
+        # time.sleep(5)
 
     print(f"Stopped thread for rfid sensor")
-    

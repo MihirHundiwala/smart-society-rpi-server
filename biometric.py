@@ -1,12 +1,23 @@
-import time, json
+import time
+import json
 import serial
 import adafruit_fingerprint
 from notifications import send_fingerprint_status
 from gate import open_gate
-from aws.functions import publish
+from config import gate_config_list
 
 
 finger = None
+
+
+def blinkled(pin):
+    GPIO.setup(pin, GPIO.OUT)
+    for i in range(2):
+        GPIO.output(pin, GPIO.LOW)  # Turn on
+        time.sleep(0.5)  # Sleep for 1 second
+        GPIO.output(pin, GPIO.HIGH)  # Turn off
+        time.sleep(0.5)  # Sleep for 1 second
+
 
 def connect_sensor():
     global finger
@@ -18,8 +29,9 @@ def connect_sensor():
         print(e)
         print("Connection with fingerprint sensor was not established")
 
+
 connect_sensor()
-    
+
 
 def match_fingerprint(State):
     while State.mode == "ENTRY" and finger.get_image() != adafruit_fingerprint.OK:
@@ -30,7 +42,7 @@ def match_fingerprint(State):
         return False
     if finger.finger_search() != adafruit_fingerprint.OK:
         return False
-    
+
     return finger.finger_id
 
 
@@ -42,10 +54,12 @@ def enroll_fingerprint(location, State):
     for i in range(1, 3):
         if i == 1:
             print("Place finger on sensor...", end="")
-            send_fingerprint_status("Place finger on sensor...", recipients=[State.notification_recipient])
+            send_fingerprint_status("Place finger on sensor...", recipients=[
+                                    State.notification_recipient])
         else:
             print("Place same finger again...", end="")
-            send_fingerprint_status("Place same finger again...", recipients=[State.notification_recipient])
+            send_fingerprint_status("Place same finger again...", recipients=[
+                                    State.notification_recipient])
 
         while True and State.mode == "ENROLL":
             image = finger.get_image()
@@ -57,12 +71,14 @@ def enroll_fingerprint(location, State):
                 print(".", end="")
             elif image == adafruit_fingerprint.IMAGEFAIL:
                 print("Imaging error")
-                send_fingerprint_status("Imaging error", recipients=[State.notification_recipient])
+                send_fingerprint_status("Imaging error", recipients=[
+                                        State.notification_recipient])
                 return False, location, image, "Imaging error"
             else:
                 print("Other error")
                 message = "Other error"
-                send_fingerprint_status("Other error", recipients=[State.notification_recipient])
+                send_fingerprint_status("Other error", recipients=[
+                                        State.notification_recipient])
                 return False, location, image, "Other error"
 
         # print("Templating...", end="")
@@ -75,25 +91,30 @@ def enroll_fingerprint(location, State):
         else:
             if image == adafruit_fingerprint.IMAGEMESS:
                 print("Image too messy")
-                send_fingerprint_status("Image too messy", recipients=[State.notification_recipient])
+                send_fingerprint_status("Image too messy", recipients=[
+                                        State.notification_recipient])
                 message = 'Image too messy'
             elif image == adafruit_fingerprint.FEATUREFAIL:
                 print("Could not identify features")
-                send_fingerprint_status("Could not identify features", recipients=[State.notification_recipient])
+                send_fingerprint_status("Could not identify features", recipients=[
+                                        State.notification_recipient])
                 message = 'Could not identify features'
             elif image == adafruit_fingerprint.INVALIDIMAGE:
                 print("Image invalid")
-                send_fingerprint_status("Image invalid", recipients=[State.notification_recipient])
+                send_fingerprint_status("Image invalid", recipients=[
+                                        State.notification_recipient])
                 message = 'Image Invalid'
             else:
                 print("Other Error")
-                send_fingerprint_status("Other Error", recipients=[State.notification_recipient])
+                send_fingerprint_status("Other Error", recipients=[
+                                        State.notification_recipient])
                 message = 'Other Error'
             return False, location, image, message
 
         if i == 1:
             print("Remove finger")
-            send_fingerprint_status("Remove Finger", recipients=[State.notification_recipient])
+            send_fingerprint_status("Remove Finger", recipients=[
+                                    State.notification_recipient])
             while image != adafruit_fingerprint.NOFINGER:
                 image = finger.get_image()
 
@@ -107,11 +128,13 @@ def enroll_fingerprint(location, State):
     else:
         if image == adafruit_fingerprint.ENROLLMISMATCH:
             print("Prints did not match")
-            send_fingerprint_status("Prints did not match", recipients=[State.notification_recipient])
+            send_fingerprint_status("Prints did not match", recipients=[
+                                    State.notification_recipient])
             message = 'Prints did not match'
         else:
             print("Other error")
-            send_fingerprint_status("Other error", recipients=[State.notification_recipient])
+            send_fingerprint_status("Other error", recipients=[
+                                    State.notification_recipient])
             message = 'Other Error'
 
         return False, location, image, message
@@ -121,28 +144,32 @@ def enroll_fingerprint(location, State):
     image = finger.store_model(location)
     if image == adafruit_fingerprint.OK:
         print("Fingerprint saved")
-        send_fingerprint_status("Fingerprint saved", recipients=[State.notification_recipient])
+        send_fingerprint_status("Fingerprint saved", recipients=[
+                                State.notification_recipient])
     else:
         if image == adafruit_fingerprint.BADLOCATION:
             print("Bad storage location")
-            send_fingerprint_status("Bad storage location", recipients=[State.notification_recipient])
+            send_fingerprint_status("Bad storage location", recipients=[
+                                    State.notification_recipient])
             message = 'Bad storage location'
         elif image == adafruit_fingerprint.FLASHERR:
             print("Flash storage error")
-            send_fingerprint_status("Flash storage error", recipients=[State.notification_recipient])
+            send_fingerprint_status("Flash storage error", recipients=[
+                                    State.notification_recipient])
             message = 'Flash storage error'
         else:
             print("Other error")
-            send_fingerprint_status("Other error", recipients=[State.notification_recipient])
+            send_fingerprint_status("Other error", recipients=[
+                                    State.notification_recipient])
             message = 'Other Error'
         return False, location, image, message
 
-    return True, location, image, "Success" 
+    return True, location, image, "Success"
 
 
 def find_empty_location():
     finger.read_templates()
-    for i in range(1,128):
+    for i in range(1, 128):
         if i not in finger.templates:
             return i
     return 1
@@ -151,7 +178,7 @@ def find_empty_location():
 def fingerprint_function(MQTTClient):
     if not finger:
         return
-    
+
     fingerprint_function.stop = False
 
     class State:
@@ -163,19 +190,21 @@ def fingerprint_function(MQTTClient):
         nonlocal State
         print("yes")
         payload = json.loads(message.payload)
-        State.mode =  "ENROLL" if (payload.get("mode", "ENTRY") == "ENROLL") else "ENTRY"
+        State.mode = "ENROLL" if (payload.get(
+            "mode", "ENTRY") == "ENROLL") else "ENTRY"
         State.notification_recipient = payload.get("expo_token", None)
         State.fingerprint_id = payload.get("fingerprint_id", None)
-        
-    MQTTClient.subscribe(topic="FINGERPRINT_SENSOR_MODE_CONTROL", QoS=1, callback=on_signal_recieved)
-    print("Subscribed to topic 'FINGERPRINT_SENSOR_MODE_CONTROL' ...")
 
+    MQTTClient.subscribe(topic="FINGERPRINT_SENSOR_MODE_CONTROL",
+                         QoS=1, callback=on_signal_recieved)
+    print("Subscribed to topic 'FINGERPRINT_SENSOR_MODE_CONTROL' ...")
 
     while not fingerprint_function.stop:
         try:
             if State.mode == "ENROLL":
                 fingerprint_location = find_empty_location()
-                enrolled, location, image, message = enroll_fingerprint(fingerprint_location, State)
+                enrolled, location, image, message = enroll_fingerprint(
+                    fingerprint_location, State)
 
                 if enrolled:
                     payload = json.dumps({
@@ -183,15 +212,17 @@ def fingerprint_function(MQTTClient):
                         "fid": location,
                         "enrolled": True,
                     })
-                    publish(MQTTClient=MQTTClient, topic = "FINGERPRINT_REGISTRATION", payload = payload)
+                    MQTTClient.publish(
+                        topic="FINGERPRINT_REGISTRATION", payload=payload, QoS=1)
 
                 else:
                     payload = json.dumps({
-                        "fid" : State.fingerprint_id,
+                        "fid": State.fingerprint_id,
                         "message": message,
                         "enrolled": False
                     })
-                    publish(MQTTClient=MQTTClient, topic = "FINGERPRINT_REGISTRATION", payload = payload)
+                    MQTTClient.publish(
+                        topic="FINGERPRINT_REGISTRATION", payload=payload, QoS=1)
 
                 State.mode = "ENTRY"
 
@@ -201,12 +232,17 @@ def fingerprint_function(MQTTClient):
                     pass
                 elif fid:
                     print("Fingerprint found at location,", fid)
-                    payload = json.dumps({"fid":fid})
-                    open_gate(gate_id = 1, MQTTClient=MQTTClient, payload=payload, topic="FINGERPRINT_VALIDATION")
+                    payload = json.dumps({"fid": fid})
+                    try:
+                        MQTTClient.publish(
+                            topic="FINGERPRINT_VALIDATION", QoS=1, payload=payload)
+                    except Exception as e:
+                        print(e)
+                    open_gate(gate_id=1)
                 else:
+                    blinkled(gate_config_list[1]['red_led_pin'])
                     print("Invalid Fingerprint")
 
-            time.sleep(2)
         except Exception as e:
             print(e)
             connect_sensor()

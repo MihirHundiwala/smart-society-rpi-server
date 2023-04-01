@@ -1,16 +1,21 @@
 light_config_list = [
+    # Garden area
     # {
     #     'light_id': 1,
     #     'ldr_pin': 3,
     #     'output_pin': 11,
     #     'threshold': 10000,
     # },
+
+    # Tower A
     # {
     #     'light_id': 2,
     #     'ldr_pin': 5,
     #     'output_pin': 13,
     #     'threshold': 10000,
     # },
+
+    # Tower B
     # {
     #     'light_id': 3,
     #     'ldr_pin': 7,
@@ -34,7 +39,7 @@ plant_config_list = [
 
 gate_config_list = {
     # Pedestrian gate
-    1 : {
+    1: {
         'gate_id': 1,
         'servo_pin': 16,
         'green_led_pin': 32,
@@ -43,7 +48,7 @@ gate_config_list = {
         'angle2': 0,
     },
     # Vehicle gate
-    2 : {
+    2: {
         'gate_id': 2,
         'servo_pin': 18,
         'green_led_pin': 38,
