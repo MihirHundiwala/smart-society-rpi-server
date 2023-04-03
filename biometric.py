@@ -226,6 +226,7 @@ def fingerprint_function(MQTTClient):
                         topic="FINGERPRINT_REGISTRATION", payload=payload, QoS=1)
 
                 State.mode = "ENTRY"
+                time.sleep(2)
 
             else:
                 fid = match_fingerprint(State)

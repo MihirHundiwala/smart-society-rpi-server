@@ -64,7 +64,7 @@ def plant_control_function(MQTTClient, plant_config):
         return GPIO.HIGH
 
     MQTTClient.subscribe(
-        topic=f"PLANT_MODE_CONTROL/{plant_config['plant_id']}", QoS=0, callback=on_plant_signal_received)
+        topic=f"PLANT_MODE_CONTROL/{plant_config['plant_id']}", QoS=1, callback=on_plant_signal_received)
     print("Subscribed to topic 'PLANT_MODE_CONTROL' ...")
 
     while not plant_control_function.stop:
