@@ -28,30 +28,30 @@
 # open_gate()
 
 
-# import serial
-# import adafruit_fingerprint
+import serial
+import adafruit_fingerprint
 
-# uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
-# finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
+finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 
-# finger.empty_library()
-# finger.read_templates()
+finger.empty_library()
+finger.read_templates()
 
-# print(finger.templates)
+print(finger.templates)
 
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
-print("Setting up Raspberry PI...")
+# import RPi.GPIO as GPIO
+# GPIO.setmode(GPIO.BOARD)
+# print("Setting up Raspberry PI...")
 
-value = GPIO.LOW
-GPIO.setup(11, GPIO.OUT)
-GPIO.output(11, value)
-GPIO.setup(13, GPIO.OUT)
-GPIO.output(13, value)
-GPIO.setup(15, GPIO.OUT)
-GPIO.output(15, value)
+# value = GPIO.LOW
+# GPIO.setup(11, GPIO.OUT)
+# GPIO.output(11, value)
+# GPIO.setup(13, GPIO.OUT)
+# GPIO.output(13, value)
+# GPIO.setup(15, GPIO.OUT)
+# GPIO.output(15, value)
 
-while True:
-    pass
+# while True:
+#     pass
 
 # GPIO.cleanup()

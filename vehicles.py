@@ -70,13 +70,13 @@ def rfid_function(MQTTClient):
             payload = json.dumps({
                 "rfid": rfid,
             })
-            # try:
-            #     MQTTClient.publish(
-            #         topic="RFID_VALIDATION", QoS=1, payload=payload)
-            # except Exception as e:
-            #     print(e)
-            open_gate(gate_id=2)  # To be commented
+            try:
+                MQTTClient.publish(
+                    topic="RFID_VALIDATION", QoS=1, payload=payload)
+            except Exception as e:
+                print(e)
+            # open_gate(gate_id=2)  # To be commented
 
-        # time.sleep(5)
+        time.sleep(5)
 
     print(f"Stopped thread for rfid sensor")

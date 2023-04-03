@@ -57,7 +57,7 @@ for plant_config in plant_config_list:
 
 # # _____________________________________________________
 
-# gate_control_function(MQTTClient, gate_config_list)
+gate_control_function(MQTTClient, gate_config_list)
 
 # _____________________________________________________
 

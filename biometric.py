@@ -5,6 +5,7 @@ import adafruit_fingerprint
 from notifications import send_fingerprint_status
 from gate import open_gate
 from config import gate_config_list
+import RPi.GPIO as GPIO
 
 
 finger = None

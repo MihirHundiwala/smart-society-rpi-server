@@ -4,7 +4,9 @@ import RPi.GPIO as GPIO
 from config import gate_config_list
 from aws.functions import publish
 
-for gate_config in gate_config_list:
+GPIO.setmode(GPIO.BOARD)
+
+for gate_config in gate_config_list.values():
     GPIO.setup(gate_config['green_led_pin'], GPIO.OUT, initial=GPIO.LOW)
     GPIO.setup(gate_config['red_led_pin'], GPIO.OUT, initial=GPIO.HIGH)
     GPIO.setup(gate_config['servo_pin'], GPIO.OUT)
@@ -34,13 +36,14 @@ def open_gate(gate_id):
         GPIO.output(gate_config['servo_pin'], False)
         servo.ChangeDutyCycle(0)
 
-    setAngle(gate_config["angle1"])
     GPIO.output(gate_config['red_led_pin'], GPIO.LOW)
     GPIO.output(gate_config['green_led_pin'], GPIO.HIGH)
+    setAngle(gate_config["angle1"])
 
     time.sleep(5)  # Close after 5 seconds
 
     blinkled(gate_config['red_led_pin'])
+    GPIO.output(gate_config['green_led_pin'], GPIO.LOW)
     setAngle(gate_config["angle2"])
     GPIO.output(gate_config['red_led_pin'], GPIO.HIGH)
 
