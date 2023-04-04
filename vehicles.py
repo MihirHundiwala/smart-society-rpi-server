@@ -34,8 +34,7 @@ def rfid_function(MQTTClient):
         State.notification_recipient = payload.get("expo_token", None)
         State.vehicle_id = payload.get("vehicle_id", None)
 
-    MQTTClient.subscribe(topic=f"RFID_MODE_CONTROL",
-                         QoS=0, callback=on_signal_recieved)
+    MQTTClient.subscribe(topic=f"RFID_MODE_CONTROL",QoS=1, callback=on_signal_recieved)
     print("Subscribed to topic 'RFID_MODE_CONTROL' ...")
 
     while not rfid_function.stop:
@@ -53,16 +52,14 @@ def rfid_function(MQTTClient):
                     "vehicle_id": State.vehicle_id,
                     "enrolled": True,
                 })
-                MQTTClient.publish(topic="RFID_REGISTRATION",
-                                   payload=payload, QoS=1)
+                MQTTClient.publish(topic="RFID_REGISTRATION",payload=payload, QoS=1)
 
             else:
                 payload = json.dumps({
                     "vehicle_id": State.vehicle_id,
                     "enrolled": False,
                 })
-                MQTTClient.publish(topic="RFID_REGISTRATION",
-                                   payload=payload, QoS=1)
+                MQTTClient.publish(topic="RFID_REGISTRATION",payload=payload, QoS=1)
 
             State.mode = "ENTRY"
 
