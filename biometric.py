@@ -235,12 +235,12 @@ def fingerprint_function(MQTTClient):
                 elif fid:
                     print("Fingerprint found at location,", fid)
                     payload = json.dumps({"fid": fid})
+                    open_gate(gate_id=1)
                     try:
                         MQTTClient.publish(
                             topic="FINGERPRINT_VALIDATION", QoS=1, payload=payload)
                     except Exception as e:
                         print(e)
-                    open_gate(gate_id=1)
                 else:
                     blinkled(gate_config_list[1]['red_led_pin'])
                     print("Invalid Fingerprint")

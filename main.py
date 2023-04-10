@@ -85,7 +85,9 @@ except KeyboardInterrupt:
 
 finally:
     print("Cleaning GPIO")
-    GPIO.cleanup()
+    for pin in [11, 13, 15, 29, 31]:
+        GPIO.setup(pin, GPIO.OUT)
+        GPIO.output(pin, GPIO.HIGH)
     print("Shutting down server...")
 
 # _____________________________________________________

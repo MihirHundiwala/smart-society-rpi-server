@@ -45,17 +45,17 @@ def plant_control_function(MQTTClient, plant_config):
                 return Mode_To_GPIO_Signal["ON"]
 
             if cooldown >= datetime.now():
-                print(f"PlantID {plant_id} On cooldown for {(cooldown-datetime.now()).total_seconds()} seconds")
+                # print(f"PlantID {plant_id} On cooldown for {(cooldown-datetime.now()).total_seconds()} seconds")
                 return Mode_To_GPIO_Signal["OFF"]
 
             if GPIO.input(sms_pin):
-                print(f"PlantID {plant_id} Water Inadequate, no cooldown period detected, pour water for {pour_water_time} seconds")
+                # print(f"PlantID {plant_id} Water Inadequate, no cooldown period detected, pour water for {pour_water_time} seconds")
                 stop_motor_on = datetime.now() + timedelta(seconds=pour_water_time)
                 cooldown = stop_motor_on + timedelta(seconds=cooldown_time)
                 return Mode_To_GPIO_Signal["ON"]
 
             else:
-                print(f"PlantID {plant_id} Water Adequate")
+                # print(f"PlantID {plant_id} Water Adequate")
                 return Mode_To_GPIO_Signal["OFF"]
 
         except Exception as err:

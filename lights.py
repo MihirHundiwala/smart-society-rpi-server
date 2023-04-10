@@ -32,7 +32,7 @@ def light_control_function(MQTTClient, light_config):
             while (GPIO.input(ldr_pin) == GPIO.LOW):
                 count += 1
 
-            # print(f"Sensor Output for AUTO mode({light_config['light_id']}): {count}")
+            # print(f"Sensor Output({light_config['light_id']}): {count}")
             if count < light_config["threshold"]:
                 return Mode_To_GPIO_Signal["OFF"]
             else:
@@ -41,16 +41,8 @@ def light_control_function(MQTTClient, light_config):
         except Exception as err:
             print("Error while receiving input from sensor.\n Exception:", err)
 
-        return Mode_To_GPIO_Signal["ON"]    # {
-    #     'plant_id': 1,
-    #     'sms_pin': 33,
-    #     'output_pin': 29,
-    # },
-    # {
-    #     'plant_id': 2,
-    #     'sms_pin': 35,
-    #     'output_pin': 31,
-    # },
+        return Mode_To_GPIO_Signal["ON"]    
+
     
     def on_light_signal_received(client, userdata, message):
         nonlocal Mode
