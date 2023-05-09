@@ -39,6 +39,7 @@ def rfid_function(MQTTClient):
 
     while not rfid_function.stop:
         try:
+            print("Scan")
             rfid, text = sensor.read()
             print(rfid)
         except Exception as e:

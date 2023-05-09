@@ -1,5 +1,5 @@
 # import time, json
-# import RPi.GPIO as GPIO 
+import RPi.GPIO as GPIO 
 
 # from aws.connections import MQTTClient
 # GPIO.setmode(GPIO.BOARD)
@@ -43,9 +43,10 @@ print(finger.templates)
 # GPIO.setmode(GPIO.BOARD)
 # print("Setting up Raspberry PI...")
 
-# value = GPIO.LOW
-# GPIO.setup(11, GPIO.OUT)
-# GPIO.output(11, value)
+# # value = GPIO.HIGH
+# pin = 3
+# GPIO.setup(pin, GPIO.OUT)
+# GPIO.output(pin, value)
 # GPIO.setup(13, GPIO.OUT)
 # GPIO.output(13, value)
 # GPIO.setup(15, GPIO.OUT)
@@ -54,4 +55,4 @@ print(finger.templates)
 # while True:
 #     pass
 
-# GPIO.cleanup()
+#GPIO.cleanup()

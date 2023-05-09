@@ -20,13 +20,13 @@ def plant_control_function(MQTTClient, plant_config):
     }
 
     class Mode:
-        mode = "AUTO"
+        mode = "OFF"
 
     stop_motor_on = datetime.min
     cooldown = datetime.min
 
-    pour_water_time = 5        # in seconds
-    cooldown_time = 30          # in seconds
+    pour_water_time = 2        # in seconds
+    cooldown_time = 20          # in seconds
 
     def on_plant_signal_received(client, userdata, message):
         nonlocal Mode

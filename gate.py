@@ -3,6 +3,7 @@ import json
 import RPi.GPIO as GPIO
 from config import gate_config_list
 from aws.functions import publish
+import threading
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -22,32 +23,36 @@ def blinkled(pin):
 
 
 def open_gate(gate_id):
-    print("Opening gate")
-    gate_config = gate_config_list[gate_id]
+    def gate_open_function(gate_id):
+        print("Opening gate")
+        gate_config = gate_config_list[gate_id]
 
-    servo = GPIO.PWM(gate_config['servo_pin'], 50)
-    servo.start(0)
+        servo = GPIO.PWM(gate_config['servo_pin'], 50)
+        servo.start(0)
 
-    def setAngle(angle):
-        duty = angle / 18 + 2
-        GPIO.output(gate_config['servo_pin'], True)
-        servo.ChangeDutyCycle(duty)
-        time.sleep(1)
-        GPIO.output(gate_config['servo_pin'], False)
-        servo.ChangeDutyCycle(0)
+        def setAngle(angle):
+            duty = angle / 18 + 2
+            GPIO.output(gate_config['servo_pin'], True)
+            servo.ChangeDutyCycle(duty)
+            time.sleep(1)
+            GPIO.output(gate_config['servo_pin'], False)
+            servo.ChangeDutyCycle(0)
 
-    GPIO.output(gate_config['red_led_pin'], GPIO.LOW)
-    GPIO.output(gate_config['green_led_pin'], GPIO.HIGH)
-    setAngle(gate_config["angle1"])
+        GPIO.output(gate_config['red_led_pin'], GPIO.LOW)
+        GPIO.output(gate_config['green_led_pin'], GPIO.HIGH)
+        setAngle(gate_config["angle1"])
 
-    time.sleep(5)  # Close after 5 seconds
+        time.sleep(5)  # Close after 5 seconds
 
-    blinkled(gate_config['red_led_pin'])
-    GPIO.output(gate_config['green_led_pin'], GPIO.LOW)
-    setAngle(gate_config["angle2"])
-    GPIO.output(gate_config['red_led_pin'], GPIO.HIGH)
+        blinkled(gate_config['red_led_pin'])
+        GPIO.output(gate_config['green_led_pin'], GPIO.LOW)
+        setAngle(gate_config["angle2"])
+        GPIO.output(gate_config['red_led_pin'], GPIO.HIGH)
 
-    servo.stop()
+        servo.stop()
+
+    gate_thread = threading.Thread(target = gate_open_function, args=(gate_id,))
+    gate_thread.start()
 
 
 def gate_control_function(MQTTClient, gate_config_list):

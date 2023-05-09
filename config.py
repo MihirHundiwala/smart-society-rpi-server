@@ -42,8 +42,8 @@ gate_config_list = {
     1: {
         'gate_id': 1,
         'servo_pin': 16,
-        'green_led_pin': 36,
-        'red_led_pin': 32,
+        'green_led_pin': 32,
+        'red_led_pin': 36,
         'angle1': 90,
         'angle2': 0,
     },
@@ -51,8 +51,8 @@ gate_config_list = {
     2: {
         'gate_id': 2,
         'servo_pin': 18,
-        'green_led_pin':40,
-        'red_led_pin': 38,
+        'green_led_pin': 38,
+        'red_led_pin': 40,
         'angle1': 0,
         'angle2': 90,
     }
